@@ -10,6 +10,10 @@ library( rgdal)
 library( sp)
 library( raster)
 
+# Set names ----
+study <- "Griffen_MBH"
+
+
 
 # Directories ----
 w.dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
@@ -62,59 +66,61 @@ zones$g9 <- g9
 zones$cz <- cz
 zones$oz <- oz
 
-
 # join both polygons
-zones$Both6 <- raster::union(zones$npz6, zones$out6)
-zones$Both9 <- raster::union(zones$npz9, zones$out9)
-zones$All <- raster::union(zones$Both6, zones$Both9)
+zones$gAll <- raster::union(zones$g1 <- g1, zones$g2)
+zones$gAll <- raster::union(zones$gAll, zones$g3)
+zones$gAll <- raster::union(zones$gAll, zones$g4)
+zones$gAll <- raster::union(zones$gAll, zones$g5)
+zones$gAll <- raster::union(zones$gAll, zones$g6)
+zones$gAll <- raster::union(zones$gAll, zones$g7)
+zones$gAll <- raster::union(zones$gAll, zones$g8)
+zones$gAll <- raster::union(zones$gAll, zones$g9)
+
+
 
 #intial look to see area
-plot( zones$All, border='black')
-plot( zones$Both6, add=TRUE, col='orange')
-plot( zones$Both9, add=TRUE, col='green')
-plot( zones$npz6, add=TRUE, col='blue')
-plot( zones$npz9, add=TRUE, col='red')
+plot( zones$oz, border='black')
+plot( zones$cz, add=TRUE, col='orange')
+plot( zones$gAll, add=TRUE, col='green')
+
 
 # Save zones rds ----
 
-saveRDS(zones, file= paste(d.dir, "Zones_Abro_NPZs.RDS", sep='/'))
+saveRDS(zones, file= paste0(paste(d.dir, paste("Zones" , study, sep='-'), sep='/'), ".RDS"))
 
 
 ## Read raster data ----
-ders06 <- stack(paste(r.dir, "Ab_NPZ06_ders.tif", sep ='/'))
-plot(ders06)
-b6 <- ders06$depth
-s6 <- ders06$slope
-ders09 <- stack(paste(r.dir, "Ab_NPZ09_ders.tif", sep ='/'))
-plot(ders09)
-b9 <- ders09$depth
-s9 <- ders09$slope
-
-# set names of derivatives --
-der.names <- c("depth", "slope", "tpi", "aspect")
-
-names(ders06) <- der.names
-names(ders09) <- der.names
+ders <- stack(paste(r.dir, "Griffen_sea-terrain.tif", sep ='/'))
+plot(ders)
+names(ders) <-  c("depth","slope", "tpi", "flowdir", "roughness", "aspect")
 
 # Save rasters rds ----
-abro_rasters <- list()
-abro_rasters$depth6 <- b6
-abro_rasters$slope6 <- s6
-abro_rasters$depth9 <- b9
-abro_rasters$slope9 <- s9
-saveRDS(abro_rasters, file= paste(d.dir, "abro_rasters_forInNOutNPZ.RDS", sep='/'))
+griffen_rasters <- list()
+griffen_rasters$depth <- ders$depth
+griffen_rasters$slope <- ders$slope
+
+# Save raster data ----
+saveRDS(griffen_rasters, file= paste0(paste(d.dir, paste("rasters" , study, sep='-'), sep='/'), ".RDS"))
 
 
 
 ## Converting polygons to a common raster ----
+b <- ders$depth
+plot(b)
+b1 <- b*(-1)
+plot(b1)
+
+t <- readOGR(paste(s.dir, "test-rectangle.shp", sep='/'))
 
 ###       ###       ### this takes a while for fine res data  ###      ###       ###
-npz6_raster <- rasterize(x=zones$npz6, y=b6, field=zones$npz6@data[,1], bkg.value=NA, fun="first")
-plot(npz6_raster)
-npz9_raster <- rasterize(x=zones$npz9, y=b9, field=zones$npz9@data[,1], bkg.value=NA, fun="first")
-plot(npz9_raster)
-out6_raster <- rasterize(x=zones$out6, y=b6, field=zones$out6@data[,1], bkg.value=NA, fun="first")
-plot(out6_raster)
+g1_raster <- rasterize(x=zones$g1, y=b, field=zones$g1@data[,1], bkg.value=NA, fun="first")
+plot(g1_raster)
+oz_raster <- rasterize(x=zones$oz, y=b1, field=zones$oz@data[,1], bkg.value=NA, fun="first")
+plot(oz_raster)
+g1_raster <- rasterize(x=zones$g1, y=b1)
+plot(g1_raster)
+t_raster <- rasterize(x=t, y=b1)
+plot(t_raster)
 out9_raster <- rasterize(x=zones$out9, y=b9, field=zones$out9@data[,1], bkg.value=NA, fun="first")
 plot(out9_raster)
 

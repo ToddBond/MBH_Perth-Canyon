@@ -9,6 +9,11 @@ library(ggplot2)
 #library(pals)
 library(RColorBrewer)
 
+
+# clear environment ----
+rm(list = ls())
+
+
 # Directories ----
 w.dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 #w.dir <- "~/MBH_AbroNPZs"
@@ -51,3 +56,22 @@ names(sea.terrain) <- c("depth","slope", "tpi", "flowdir", "roughness", "aspect"
 
 # save derivatives of sea terrain ----
 writeRaster(sea.terrain, paste(r.dir, "Griffen_sea-terrain.tif", sep='/'))
+
+
+## Resample bathy ----
+
+b50 <- raster::disaggregate(b, 5)
+plot(b50)
+
+slope50 <- raster::disaggregate(slope, 5)
+plot(slope50)
+
+tpi50 <- raster::disaggregate(tpi, 5)
+plot(tpi50)
+
+sea.terrain <- stack(b50, slope50, tpi50)
+plot(sea.terrain)
+names(sea.terrain) <- c("depth","slope", "tpi")
+
+# save derivatives of sea terrain ----
+writeRaster(sea.terrain, paste(r.dir, "Griffen_sea-terrain_fine.tif", sep='/'))
