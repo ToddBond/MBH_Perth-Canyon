@@ -38,8 +38,10 @@ g6 <- readOGR(paste(s.dir, "EZ_G6.shp", sep = '/'))
 g7 <- readOGR(paste(s.dir, "EZ_G7.shp", sep = '/'))
 g8 <- readOGR(paste(s.dir, "EZ_G8.shp", sep = '/'))
 g9 <- readOGR(paste(s.dir, "EZ_G9.shp", sep = '/'))
-cz <- readOGR(paste(s.dir, "CautionaryZone.shp", sep = '/'))
-oz <- readOGR(paste(s.dir, "OpenAccessZone.shp", sep = '/'))
+cs <- readOGR(paste(s.dir, "CautionaryStructure.shp", sep = '/'))
+cz <- readOGR(paste(s.dir, "CautionaryZone_NoStructure.shp", sep = '/'))
+os <- readOGR(paste(s.dir, "OpenAccessStructure.shp", sep = '/'))
+oz <- readOGR(paste(s.dir, "OpenAccessZone_NoStructure.shp", sep = '/'))
 
 # check crs --
 proj4string(g1)
@@ -51,7 +53,9 @@ proj4string(g6)
 proj4string(g7)
 proj4string(g8)
 proj4string(g9)
+proj4string(cs)
 proj4string(cz)
+proj4string(os)
 proj4string(oz)
 
 
@@ -66,7 +70,9 @@ zones$g6 <- g6
 zones$g7 <- g7
 zones$g8 <- g8
 zones$g9 <- g9
+zones$cs <- cs
 zones$cz <- cz
+zones$os <- os
 zones$oz <- oz
 
 # join both polygons
@@ -83,7 +89,9 @@ zones$gAll <- raster::union(zones$gAll, zones$g9)
 
 #intial look to see area
 plot( zones$oz, border='black')
+plot( zones$os, border='black', col = 'yellow', add=TRUE)
 plot( zones$cz, add=TRUE, col='orange')
+plot( zones$cs, border='black', col = 'red', add= TRUE)
 plot( zones$gAll, add=TRUE, col='green')
 
 
@@ -133,8 +141,12 @@ g8_raster <- rasterize(x=g8, y=b, field=1, background=NA, fun="first")
 plot(g8_raster)
 g9_raster <- rasterize(x=g9, y=b, field=1, background=NA, fun="first")
 plot(g9_raster)
+cs_raster <- rasterize(x=cs, y=b, field=1, background=NA, fun="first")
+plot(cs_raster)
 cz_raster <- rasterize(x=cz, y=b, field=1, background=NA, fun="first")
 plot(cz_raster)
+os_raster <- rasterize(x=os, y=b, field=1, bkg.value=NA, fun="first")
+plot(os_raster)
 oz_raster <- rasterize(x=oz, y=b, field=1, bkg.value=NA, fun="first")
 plot(oz_raster)
 
@@ -150,8 +162,12 @@ tmp6 <- as.data.frame( g6_raster, xy=TRUE)
 tmp7 <- as.data.frame( g7_raster, xy=TRUE)
 tmp8 <- as.data.frame( g8_raster, xy=TRUE)
 tmp9 <- as.data.frame( g9_raster, xy=TRUE)
-tmp10 <- as.data.frame( cz_raster, xy=TRUE)
-tmp11 <- as.data.frame( oz_raster, xy=TRUE)
+tmp10 <- as.data.frame( cs_raster, xy=TRUE)
+tmp11 <- as.data.frame( cz_raster, xy=TRUE)
+tmp12 <- as.data.frame( os_raster, xy=TRUE)
+tmp13 <- as.data.frame( oz_raster, xy=TRUE)
+
+tmp14 <- as.data.frame( b, xy = TRUE)
 
 # Join data for NPZ6 and adjacent analysis --
 
@@ -166,11 +182,14 @@ GriffenDat <- cbind( GriffenDat, tmp8[,3])
 GriffenDat <- cbind( GriffenDat, tmp9[,3])
 GriffenDat <- cbind( GriffenDat, tmp10[,3])
 GriffenDat <- cbind( GriffenDat, tmp11[,3])
+GriffenDat <- cbind( GriffenDat, tmp12[,3])
+GriffenDat <- cbind( GriffenDat, tmp13[,3])
+GriffenDat <- cbind( GriffenDat, tmp14[,3])
 head(GriffenDat)
 
 
 # Set column names --
-df.names <- c("Eastern", "Northing", "g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "cz", "oz")
+df.names <- c("Eastern", "Northing", "g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "cs", "cz", "os", "oz", "depth")
 
 names(GriffenDat) <- df.names
 
