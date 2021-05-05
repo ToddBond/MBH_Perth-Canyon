@@ -75,7 +75,7 @@ zones$cz <- cz
 zones$os <- os
 zones$oz <- oz
 
-# join both polygons
+# join both exclusion zones polygons
 zones$gAll <- raster::union(zones$g1 <- g1, zones$g2)
 zones$gAll <- raster::union(zones$gAll, zones$g3)
 zones$gAll <- raster::union(zones$gAll, zones$g4)
@@ -85,7 +85,16 @@ zones$gAll <- raster::union(zones$gAll, zones$g7)
 zones$gAll <- raster::union(zones$gAll, zones$g8)
 zones$gAll <- raster::union(zones$gAll, zones$g9)
 
+# join all polygons
 
+zones$All <- raster::union(zones$gAll, zones$cs)
+zones$All <- raster::union(zones$All, zones$cz)
+zones$All <- raster::union(zones$All, zones$os)
+zones$All <- raster::union(zones$All, zones$oz)
+
+plot(zones$All)
+
+head(zones$All)
 
 #intial look to see area
 plot( zones$oz, border='black')
