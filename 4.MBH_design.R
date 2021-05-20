@@ -15,9 +15,9 @@ rm(list = ls())
 # Set names ----
 study <- "Griffen_MBH"
 
-platform <- "Bruvs"
+platform <- "BOSS"
 
-design.version <- "v5"
+design.version <- "v4"
 
 
 # Directories ----
@@ -31,7 +31,7 @@ r.dir <- paste(w.dir, "rasters", sep='/')
 
 
 # Read in the inclusion probs ----
-inclProbs <- raster(paste(d.dir, "inclProbs-Griffen_MBH-Bruvs-v5.tif", sep='/'))
+inclProbs <- raster(paste(d.dir, "inclProbs-Griffen_MBH-BOSS-v2.tif", sep='/'))
 plot(inclProbs)
 # check sun of incl probs --
 cellStats(inclProbs, 'sum')
@@ -51,7 +51,7 @@ dat <- readRDS(paste(d.dir,"Data-Griffen_MBH.RDS", sep ='/'))
 rast <- readRDS(paste(d.dir, "rasters-Griffen_MBH-fine.RDS", sep='/'))
 zones <- readRDS(paste(d.dir, "Zones-Griffen_MBH.RDS", sep='/'))
 straw.nums <- readRDS(paste(d.dir, "StrawmanNumbers-Griffen_MBH-BOSS-v4.RDS", sep='/'))
-strata <- raster(paste(d.dir, "Bathy_cuts-Griffen_MBH-BOSS-v3.tif", sep='/'))
+strata <- raster(paste(d.dir, "Bathy_cuts-Griffen_MBH-BOSS-v2.tif", sep='/'))
 
 # increase staw nums to oversample --
 #straw.nums <- straw.nums + 3 # for design 3
@@ -116,7 +116,7 @@ max(dist1)
 min(dist1[dist1 > 0]) # minimum distance other than 0
 
 ## p1 ----
-p1_matrix <- gWithinDistance(p1u, dist = 150, byid = TRUE)
+p1_matrix <- gWithinDistance(p1u, dist = 100, byid = TRUE)
 diag(p1_matrix) <- NA
 p1_matrix
 
@@ -146,7 +146,23 @@ head(remaining.sites)
 id <- paste(1:120)
 remaining.sites$uniqueID <- id
 head(remaining.sites)
+proj4string(remaining.sites)
 
+rem.sites <- spTransform(remaining.sites, proj4string(zones$All))
+
+rem.sites <- raster::extract(zones$All, remaining.sites, xy = TRUE, sp = TRUE)
+head(rem.sites)
+class(rem.sites)
+str(rem.sites)
+rem.sites$name <- as.factor(rem.sites$name)
+names(rem.sites)
+rem.sites <- rem.sites[,c(6,55)]
+head(rem.sites)
+length(rem.sites$Infra.1)
+
+remaining.sites$infra <- rem.sites$Infra.1
+remaining.sites$name <- rem.sites$name
+head(remaining.sites)
 # save new sites ----
 
 writeOGR(remaining.sites, o.dir, paste(platform, study, design.version, sep='-'), driver = "ESRI Shapefile", overwrite = TRUE)
