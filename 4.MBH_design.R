@@ -42,18 +42,20 @@ plot(inclProbs)
 # check sun of incl probs --
 cellStats(inclProbs, 'sum')
 
+#inclProbs <- setValues( inclProbs, values( inclProbs)*120)
+
 
 # Read in data ----
 
 dat <- readRDS(paste(d.dir,"Data-Griffen_MBH.RDS", sep ='/'))
 rast <- readRDS(paste(d.dir, "rasters-Griffen_MBH-fine.RDS", sep='/'))
 zones <- readRDS(paste(d.dir, "Zones-Griffen_MBH.RDS", sep='/'))
-straw.nums <- readRDS(paste(d.dir, "StrawmanNumbers-Griffen_MBH-Bruvs-v5.RDS", sep='/'))
-strata <- raster(paste(d.dir, "Bathy_cuts-Griffen_MBH-Bruvs-v5.tif", sep='/'))
+straw.nums <- readRDS(paste(d.dir, "StrawmanNumbers-Griffen_MBH-BOSS-v4.RDS", sep='/'))
+strata <- raster(paste(d.dir, "Bathy_cuts-Griffen_MBH-BOSS-v3.tif", sep='/'))
 
 # increase staw nums to oversample --
 #straw.nums <- straw.nums + 3 # for design 3
-straw.nums <- straw.nums + 4 # for design 4
+straw.nums <- straw.nums  # for design 4
 straw.nums
 
 
@@ -114,7 +116,7 @@ max(dist1)
 min(dist1[dist1 > 0]) # minimum distance other than 0
 
 ## p1 ----
-p1_matrix <- gWithinDistance(p1u, dist = 400, byid = TRUE)
+p1_matrix <- gWithinDistance(p1u, dist = 150, byid = TRUE)
 diag(p1_matrix) <- NA
 p1_matrix
 
@@ -140,7 +142,10 @@ plot(zones$os, add=T)
 plot(zones$oz, add=T)
 plot(remaining.sites, pch = 20, add=T) # 41
 #remaining.sites$zone
-
+head(remaining.sites)
+id <- paste(1:120)
+remaining.sites$uniqueID <- id
+head(remaining.sites)
 
 # save new sites ----
 

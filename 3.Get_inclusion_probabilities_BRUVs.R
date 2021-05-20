@@ -12,9 +12,9 @@ rm(list = ls())
 # Set names ----
 study <- "Griffen_MBH"
 
-platform <- "Bruvs"
+platform <- "BOSS"
 
-design.version <- "v5"
+design.version <- "v4"
 
 
 # Directories ----
@@ -37,7 +37,8 @@ zones <- readRDS(paste(d.dir, "Zones-Griffen_MBH.RDS", sep='/'))
 #  Straw man for numbers of samples in each region ----
 # 72 BRUVs in total
 
-straw.nums <- c(3,3,3,3,3,3,4,3,3,10,14,6,14)  # for BRUVs - numbers of drops rest w structure + caut with structure,cau wout str, open w str, open wout str
+#straw.nums <- c(3,3,3,3,3,3,4,3,3,10,14,6,14)  # for BRUVs - numbers of drops rest w structure + caut with structure,cau wout str, open w str, open wout str
+straw.nums <- c(5,5,5,5,5,5,7,5,5,17,23,10,23) # for boss v4
 #straw.nums <- c(6,6,6,6,6,6,8,6,6,20,28,12,28) # for BOSS
 straw.props <- straw.nums / sum( straw.nums)
 straw.props
