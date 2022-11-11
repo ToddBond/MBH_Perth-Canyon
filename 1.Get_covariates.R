@@ -29,8 +29,11 @@ r.dir <- paste(w.dir, "rasters", sep='/')
 b <- raster(paste(r.dir, "Griffen_Bathy.tif", sep='/'))
 plot(b)
 
+b <- raster(paste(r.dir, "Perth-Canyon-Bathy.tif", sep='/'))
+plot(b)
+
 # Remove the bathy deeper than 200m ----
-b[b < -200] <- NA
+b[b > -1000] <- NA
 plot(b)
 
 depth <- b
@@ -55,7 +58,7 @@ plot(sea.terrain)
 names(sea.terrain) <- c("depth","slope", "tpi", "flowdir", "roughness", "aspect")
 
 # save derivatives of sea terrain ----
-writeRaster(sea.terrain, paste(r.dir, "Griffen_sea-terrain.tif", sep='/'))
+writeRaster(sea.terrain, paste(r.dir, "Perth-Canyon_sea-terrain.tif", sep='/'))
 
 
 ## Resample bathy ----
@@ -74,4 +77,4 @@ plot(sea.terrain)
 names(sea.terrain) <- c("depth","slope", "tpi")
 
 # save derivatives of sea terrain ----
-writeRaster(sea.terrain, paste(r.dir, "Griffen_sea-terrain_fine.tif", sep='/'))
+writeRaster(sea.terrain, paste(r.dir, "Perth-Canyon_sea-terrain_fine.tif", sep='/'))
